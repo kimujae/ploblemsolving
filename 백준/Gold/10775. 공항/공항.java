@@ -18,7 +18,7 @@ public class Main {
         count = 0;
         for (int  z= 0; z < i; z++) {
             int gate = scan.nextInt();
-            int emptyGate = find(gate);
+            int emptyGate = find( gate);
 
             if (emptyGate == 0) {
                 break;
@@ -31,23 +31,13 @@ public class Main {
         System.out.println(count);
     }
 
-
-
-
-        public static int find(int x) {
-            if (x == parent[x]) {
-                return x;
-            }
-
-            return parent[x] = find(parent[x]);
-        }
-
-        public static void union(int x, int y) {
-            x = find(x);
-            y = find(y);
-
-            if (x != y) {
-                parent[x] = y;
-            }
-        }
+    public static int find( int a){
+        if(parent[a] == a ) return a;
+        else return parent[a] = find( parent[a]);
     }
+
+    public static void union( int a, int b){
+        if(find( a) < find( b)) parent[b] = a;
+        else parent[a] = b;
+    }
+}
