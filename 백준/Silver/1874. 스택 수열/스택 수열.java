@@ -8,14 +8,11 @@ public class Main{
         Scanner scan = new Scanner(System.in);
         StringBuilder anssb = new StringBuilder();
         int n = scan.nextInt();
-        int max, count , input , tmp, next;
+        int max, input;
         Stack<Integer> stack = new Stack<>();
 
-        tmp = 0;
         max = 0;
-        count = 0;
-        next = 0;
-
+        
         for(int i = 0; i < n ; i++) {
             input = scan.nextInt();
             if (max < input) {
