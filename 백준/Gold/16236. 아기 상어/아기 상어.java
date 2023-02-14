@@ -1,17 +1,24 @@
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Scanner;
+import java.util.*;
 
-public class Main {
+public class Main{
     public static int[][] map;
     public static boolean[][] visited;
     public static int[][] times; //걸린 시간
-   
-    public static int[] changeY = new int[]{0,-1,0,1};//2좌,4우 우선
-    public static int[] changeX = new int[]{-1,0,1,0};//1상,3하 우선
+
+    public static int[] changeX = new int[]{-1,0,0,1};//1상,3하 우선
+    public static int[] changeY = new int[]{0,-1,1,0};//2좌,4우 우선
+
     public static Scanner scan = new Scanner(System.in);
-    public static int N, self, eat, time, startX, startY, minX, minY, minDist, nextX, nextY;
+    public static int N, self, eat, time, startX, startY;
     public static Queue<int[]> queue = new LinkedList<int[]>();
+    public static PriorityQueue<int[]> priorityQueue = new PriorityQueue<int[]>(new Comparator<int[]>() {
+        @Override
+        public int compare(int[] o1, int[] o2) {
+            if(o1[0] == o2[0]) return o1[1] - o2[1];
+            else return o1[0] - o2[0] ;
+        }
+    });
+
     public static boolean isEatable;
 
     public static void main(String[] args) {
@@ -40,82 +47,67 @@ public class Main {
     public static void bfs(int startX, int startY){
         self = 2;//아기상어의 시작 무게
         eat = 0;//먹은 횟수
-        minX = minY = N;
-        minDist = N*N;
         visited[startX][startY] = true;
         map[startX][startY] = 0;
         queue.add(new int[]{startX,startY});
+        int temp = time;
+        while(!queue.isEmpty()) {
+            int size = queue.size();
+            int count = 0;
+            while (count < size) {
+                int[] node = queue.poll();
+                count++;
+                startX = node[0];
+                startY = node[1];
+                
+                for (int i = 0; i < 4; i++) {
+                    int nextX = startX + changeX[i];
+                    int nextY = startY + changeY[i];
 
-        while(!queue.isEmpty()){
-            int[] node = queue.poll();
-            startX = node[0];
-            startY = node[1];
-            //System.out.println(startX + " " + startY);
-            for(int i = 0; i < 4; i++){
-                nextX = startX + changeX[i];
-                nextY = startY + changeY[i];
+                    if (nextX < 0 || nextX > N - 1 || nextY < 0 || nextY > N - 1)
+                        //map을 벗어나면 pass
+                        continue;
 
-                if(nextX < 0 || nextX > N-1 || nextY < 0 || nextY > N-1)
-                    //map을 벗어나면 pass
-                    continue;
+                    if (visited[nextX][nextY])
+                        continue;
 
-                if(visited[nextX][nextY])
-                    continue;
+                    if (map[nextX][nextY] > self)
+                        //자신무게보다 큰 상태에 대해서 pass
+                        continue;
 
-                if(map[nextX][nextY] > self)
-                    //자신무게보다 큰 상태에 대해서 pass
-                    continue;
-
-                //먹을 수 있는 먹이가 있는 상황인지 체크추가
-                if(map[nextX][nextY] > 0 && map[nextX][nextY] < self){
-                    //먹을 수 있는 상태
-                    isEatable = true;
-                    times[nextX][nextY] = times[startX][startY]+1;
-                    queue.add(new int[]{nextX, nextY});
-                    visited[nextX][nextY] = true;
-
-                    if(times[nextX][nextY] < minDist){
-                        minDist = times[nextX][nextY];
-                        minX = nextX;
-                        minY = nextY;
+                    if (map[nextX][nextY] > 0 && map[nextX][nextY] < self) {
+                        priorityQueue.add(new int[]{nextX, nextY});
+                        visited[nextX][nextY] = true;
+                        times[nextX][nextY] = times[startX][startY] + 1;
+                        continue;
                     }
-                    else if(times[nextX][nextY] == minDist){
-                        if(minX > nextX) {
-                            minX = nextX;
-                            minY = nextY;
-                        }
-                        if(minX == nextX && minY > nextY){
-                            minY = nextY;
-                        }
-                    }
-                }
 
-                else{
-                    //길
-                    visited[nextX][nextY] = true;
-                    queue.add(new int[]{nextX,nextY});
-                    times[nextX][nextY] = times[startX][startY] + 1;
+                    else {
+                        //길
+                        visited[nextX][nextY] = true;
+                        queue.add(new int[]{nextX, nextY});
+                        times[nextX][nextY] = times[startX][startY] + 1;
+                    }
                 }
             }
 
-            if(queue.isEmpty() && isEatable) {
+
+            if(!priorityQueue.isEmpty()){
+                //먹이를 먹자
+                visited = new boolean[N][N];
+                queue.clear();
+                map[priorityQueue.peek()[0]][priorityQueue.peek()[1]] = 0;
+                time += times[priorityQueue.peek()[0]][priorityQueue.peek()[1]];
+                queue.add(priorityQueue.poll());
+                priorityQueue.clear();
+                times = new int[N][N];
                 eat++;
-                if (eat >= self) {
+                if (eat == self) {
                     self++;
                     eat = 0;
                 }
-                time += minDist;
-                times = new int[N][N];
-                visited = new boolean[N][N];
-                queue = new LinkedList<int[]>();
-                queue.add(new int[]{minX, minY});
-                isEatable = false;
-                map[minX][minY] = 0;
-                minX = minY = N-1;
-                minDist = N*N;
-            }
-
+            }// 먹이 먹기 끝
+            
         }
-
     }
 }
