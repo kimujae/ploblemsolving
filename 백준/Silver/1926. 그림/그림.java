@@ -1,11 +1,9 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Stack;
 import java.util.StringTokenizer;
 
-public class Main{
-    public static Stack<int[]> stack = new Stack<>();
+public class Main {
     public static boolean[][] visited;
     public static int[][] map;
     public static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
