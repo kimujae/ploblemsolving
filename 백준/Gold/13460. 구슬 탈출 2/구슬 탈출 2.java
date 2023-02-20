@@ -1,20 +1,14 @@
 import java.io.*;
-import java.util.Scanner;
 import java.util.StringTokenizer;
 
-public class Main {
+public class Main{
     public static int[][] map;
-    public static int N, M, REDX, REDY, BLUEX, BLUEY, min, comnum;
+    public static int N, M, REDX, REDY, BLUEX, BLUEY, min;
     public static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
     public static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     public static StringTokenizer st;
     public static int[] changeX = {-1, 0, 1, 0};
     public static int[] changeY = {0, -1, 0, 1};
-    public static int[] joyStick = {0,1,2,3};
-    public static int[] joyStick1 = {1,2,3};
-    public static int[] joyStick2 = {0,2,3};
-    public static int[] joyStick3 = {0,1,3};
-    public static int[] joyStick4 = {0,1,2};
     public static int[] selected;
 
 
@@ -45,7 +39,7 @@ public class Main {
         }//map정보완성
         br.close();
 
-        combination(0, 5); // 방향키 조합 실행 3^10
+        bfs(1, REDX, REDY, BLUEX, BLUEY, 5);// 방향키 조합 실행 4 * 3^9 - 막힌길case
         if(min == Integer.MAX_VALUE)bw.write(String.valueOf(-1));
         else bw.write(String.valueOf(min));
 
@@ -53,175 +47,61 @@ public class Main {
 
     }
 
-    static int bfs(int redX, int redY, int blueX, int blueY, int[] joyStick) {
-        boolean redGoal = false;
-        boolean blueGoal = false;
-        int count = 0;
+    static void bfs(int depth, int rx, int ry, int bx, int by, int prev) {
+        if(depth == 11) return;
 
-        for (int direction : joyStick) {
-            count++;
-            while (true) { // 길이면 한번에 이동
-                int rnextX = redX + changeX[direction];
-                int rnextY = redY + changeY[direction];
+        for (int i = 0 ; i < 4; i++) {
+            int redX = rx;
+            int redY = ry;
+            int blueX = bx;
+            int blueY = by;
+            if(prev == i) continue;
+            if(prev == 0 && i == 2) continue;
+            if(prev == 1 && i == 3) continue;
+            if(prev == 2 && i == 0) continue;
+            if(prev == 3 && i == 1) continue;
+            if(map[redX + changeX[i]][redY + changeY[i]] == 1 && map[blueX + changeX[i]][blueY + changeY[i]] == 1) continue;
 
-                if (rnextX < 0 || rnextX > N - 1 || rnextY < 0 || rnextY > M - 1)
-                    break;
+            int rmov = 0;
+            int bmov = 0;
 
-                if (map[rnextX][rnextY] == 1)
-                    break;
-
-                if (map[rnextX][rnextY] == 9) {
-                    redGoal = true;
-                    map[redX][redY] = 0;
-                    break;
-                }
-
-                if (map[rnextX][rnextY] == 3){
-                    // 3 - way
-                    break;
-                }
-
-                map[redX][redY] = 0;
-                redX = rnextX;
-                redY = rnextY;
-                map[redX][redY] = 2;
+            while (map[redX + changeX[i]][redY + changeY[i]] != 1) { // 길이면 한번에 이동
+                redX += changeX[i];
+                redY += changeY[i];
+                rmov++;
+                if(map[redX][redY] == 9) break;
             }
 
-
-            while (true) {// 길이면 한번에 이동
-                int bnextX = blueX + changeX[direction];
-                int bnextY = blueY + changeY[direction];
-
-                if (bnextX < 0 || bnextX > N - 1 || bnextY < 0 || bnextY > M - 1)
-                    break;
-
-                if (map[bnextX][bnextY] == 1)
-                    break;
-
-                if (map[bnextX][bnextY] == 9) {
-                    blueGoal = true;
-                    map[blueX][blueY] = 0;
-                    break;
-                }
-
-                if (map[bnextX][bnextY] == 2) {
-                    // 3 - way
-                    break;
-                }
-
-                map[blueX][blueY] = 0;
-                blueX = bnextX;
-                blueY = bnextY;
-                map[blueX][blueY] = 3;
+            while (map[blueX + changeX[i]][blueY + changeY[i]] != 1) { // 길이면 한번에 이동
+                blueX += changeX[i];
+                blueY += changeY[i];
+                bmov++;
+                if(map[blueX][blueY] == 9) break;
             }
 
-            while (true) { // 길이면 한번에 이동
-                int rnextX = redX + changeX[direction];
-                int rnextY = redY + changeY[direction];
-
-                if (rnextX < 0 || rnextX > N - 1 || rnextY < 0 || rnextY > M - 1)
-                    break;
-
-                if (map[rnextX][rnextY] == 1)
-                    break;
-
-                if (map[rnextX][rnextY] == 9) {
-                    redGoal = true;
-                    map[redX][redY] = 0;
-                    break;
-                }
-
-                if (map[rnextX][rnextY] == 3){
-                    // 3 - way
-                    break;
-                }
-
-                map[redX][redY] = 0;
-                redX = rnextX;
-                redY = rnextY;
-                map[redX][redY] = 2;
+            if (map[blueX][blueY] == 9) { //실패
+                continue; //탐색 지속
             }
 
-
-            while (true) {// 길이면 한번에 이동
-                int bnextX = blueX + changeX[direction];
-                int bnextY = blueY + changeY[direction];
-
-                if (bnextX < 0 || bnextX > N - 1 || bnextY < 0 || bnextY > M - 1)
-                    break;
-
-                if (map[bnextX][bnextY] == 1)
-                    break;
-
-                if (map[bnextX][bnextY] == 9) {
-                    blueGoal = true;
-                    map[blueX][blueY] = 0;
-                    break;
-                }
-
-                if (map[bnextX][bnextY] == 2) {
-                    // 3 - way
-                    break;
-                }
-
-                map[blueX][blueY] = 0;
-                blueX = bnextX;
-                blueY = bnextY;
-                map[blueX][blueY] = 3;
+            if(map[redX][redY] == 9) { //성공
+                min = Math.min(depth, min);
+                break; //탐색 끝
             }
 
-            if (redGoal || blueGoal) break;
+            if(redX == blueX && redY == blueY){// 공이 같은 위치에 있다면, 많이 이동한 공을 한 칸 뒤로 보낸다
+                if(bmov < rmov){
+                    redX = redX - changeX[i];
+                    redY = redY - changeY[i];
+                }
+                else if(bmov > rmov){
+                    blueX = blueX - changeX[i];
+                    blueY = blueY - changeY[i];
+                }
+            }
+
+            bfs(depth+1, redX, redY, blueX, blueY, i);
         }
-
-
-        map[redX][redY] = 0;
-        map[blueX][blueY] = 0;
-        if(blueGoal) return Integer.MAX_VALUE;
-        else if(redGoal) return count;
-        else return Integer.MAX_VALUE;
     }
-
-
-    static void combination(int depth, int prev) {
-        if (depth == 10) {
-            //bfs 실행
-            map[REDX][REDY] = 2;
-            map[BLUEX][BLUEY] = 3;
-            min = Math.min(min, bfs(REDX, REDY, BLUEX, BLUEY, selected));
-            return; // return으로 스택을 반환해줘야 한다~ 핵심
-        }
-
-        if(prev ==5) {
-            for (int i = 0; i < 4; i++) {
-                prev = selected[depth] = joyStick[i];
-                combination(depth + 1, prev);
-
-            }
-        }else{
-            for (int j = 0; j < 3; j++) {
-                if (prev == 0) {
-                    int para = selected[depth] = joyStick1[j];
-                    combination(depth + 1, para);
-
-                }
-                else if(prev == 1) {
-                    int para  = selected[depth] = joyStick2[j];
-                    combination(depth + 1, para);
-
-                }
-                else if(prev == 2) {
-                    int para  = selected[depth] = joyStick3[j];
-                    combination(depth + 1, para);
-                }
-                else if(prev == 3) {
-                    int para  = selected[depth] = joyStick4[j];
-                    combination(depth + 1, para);
-                }
-            }
-        }
-
-    }
-
 }
 
 
