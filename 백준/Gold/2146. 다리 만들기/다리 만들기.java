@@ -44,7 +44,8 @@ public class Main {
 
         //2. 영역확장시작
         bridge();
-        System.out.println(min);
+        bw.write(String.valueOf(min));
+        bw.flush();
     }
 
 
