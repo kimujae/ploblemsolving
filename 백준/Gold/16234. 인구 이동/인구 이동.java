@@ -3,11 +3,11 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.StringTokenizer;
 
-public class Main{
-    static int[][] map;
+public class Main {
+    static Contry[][] map;
     static boolean[][] visited;
-    static Queue<int[]> queue = new LinkedList<>();
-    static Queue<int[]> movingQ = new LinkedList<>();
+    static Queue<Contry> queue = new LinkedList<>();
+    static Queue<Contry> movingQ = new LinkedList<>();
     static int[] changeX = {-1, 0 ,1, 0};
     static int[] changeY = {0, -1, 0, 1};
     static int N, L, R, move;
@@ -21,7 +21,7 @@ public class Main{
         // L <= x <= R 범위 내에서 연합형성
         L = Integer.parseInt(st.nextToken());
         R = Integer.parseInt(st.nextToken());
-        map = new int[N][N];
+        map = new Contry[N][N];
         visited = new boolean[N][N];
         move = -1;
 
@@ -29,7 +29,7 @@ public class Main{
         for(int i =  0; i < N; i++){
             st = new StringTokenizer(br.readLine());
             for(int j = 0; j < N; j++){
-                map[i][j] = Integer.parseInt(st.nextToken());
+                map[i][j] = new Contry(i, j, Integer.parseInt(st.nextToken()));
             }
         }
 
@@ -55,16 +55,29 @@ public class Main{
         bw.flush();
     }
 
+    static class Contry{
+        int x;
+        int y;
+        int people;
+
+        Contry(int x, int y, int person){
+            super();
+            this.x = x;
+            this.y = y;
+            this.people = person;
+        }
+    }
+
     static void bfs(int x, int y){
         visited[x][y]= true;
-        queue.add(new int[]{x, y});
-        movingQ.add(new int[]{x, y});
-        int person = map[x][y];
+        queue.add(map[x][y]);
+        movingQ.add(map[x][y]);
+        int person = map[x][y].people;
 
         while(!queue.isEmpty()){
-            int[] now = queue.poll();
-            int nowX = now[0];
-            int nowY = now[1];
+            Contry now = queue.poll();
+            int nowX = now.x;
+            int nowY = now.y;
 
             for(int i = 0; i < 4; i++){
                 int nextX = nowX + changeX[i];
@@ -80,9 +93,9 @@ public class Main{
                     continue;
 
                 visited[nextX][nextY] =  true;
-                queue.add(new int[]{nextX, nextY});
-                movingQ.add(new int[]{nextX, nextY}); // 연합국가 add
-                person += map[nextX][nextY]; // 연합인구수
+                queue.add(map[nextX][nextY]);
+                movingQ.add(map[nextX][nextY]); // 연합국가 add
+                person += map[nextX][nextY].people; // 연합인구수
             }
         } // 연합 파악 완료
         moving(movingQ, person);
@@ -90,17 +103,16 @@ public class Main{
 
 
     static boolean checkUnion(int nowX, int nowY, int nextX, int nextY){
-        if(L <= Math.abs(map[nowX][nowY] - map[nextX][nextY]) && Math.abs(map[nowX][nowY] - map[nextX][nextY]) <= R) return true;
+        if(L <= Math.abs(map[nowX][nowY].people - map[nextX][nextY].people)
+                && Math.abs(map[nowX][nowY].people - map[nextX][nextY].people) <= R) return true;
         else return false;
     }
 
-    static void moving(Queue<int[]> queue, int person){
+    static void moving(Queue<Contry> queue, int person){
         int num = (int)person/queue.size();
         while(!queue.isEmpty()) {
-            int[] now = queue.poll();
-            int x = now[0];
-            int y = now[1];
-            map[x][y] = num;
+            Contry now = queue.poll();
+            now.people = num;
         }
     }
 
