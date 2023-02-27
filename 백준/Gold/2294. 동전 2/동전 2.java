@@ -14,7 +14,6 @@ public class Main {
         n = Integer.parseInt(st.nextToken());
         k = Integer.parseInt(st.nextToken());
         coins = new int[n];
-        memo = new int[k+1];
         min = new int[k+1];
 
         for(int i = 0; i < n; i++){
@@ -22,19 +21,17 @@ public class Main {
         }//coin배열 완성
 
 
-        memo[0] = 1;
-        Arrays.fill(min, Integer.MAX_VALUE);
+        Arrays.fill(min, 10001);
         min[0] = 0;
 
         for(int i = 0; i < n; i++){
             int coin = coins[i];
             for(int j = coin; j < k+1; j++){
-                memo[j] += memo[j - coin];
-                if(memo[j - coin] != 0)min[j] = Math.min(min[j -coin]+1, min[j]);
+                min[j] = Math.min(min[j -coin] + 1, min[j]);
             }
         }
 
-        if(min[k] == Integer.MAX_VALUE) bw.write(String.valueOf(-1));
+        if(min[k] >= 10001) bw.write(String.valueOf(-1));
         else bw.write(String.valueOf(min[k]));
         bw.flush();
     }
