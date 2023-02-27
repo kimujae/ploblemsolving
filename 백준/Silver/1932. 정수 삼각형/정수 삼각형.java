@@ -5,13 +5,12 @@ public class Main {
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
     static StringTokenizer st;
-    static int[][] triangle, dp;
+    static int[][] triangle;
     static boolean[][] visited;
 
     public static void main(String[] args) throws IOException{
         n = Integer.parseInt(br.readLine());
         triangle = new int[n][n];
-        dp = new int[n][n];
         visited = new boolean[n][n];
 
         for(int i = 0; i < n; i ++){
