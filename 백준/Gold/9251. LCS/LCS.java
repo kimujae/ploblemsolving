@@ -1,10 +1,9 @@
 import java.io.*;
-import java.util.Arrays;
-
-public class Main{
+public class Main {
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
     static int[] dp;
+    static int max;
     public static void main(String[] args) throws IOException {
         String str1 = br.readLine();
         String str2 = br.readLine();
@@ -16,26 +15,15 @@ public class Main{
         bw.flush();
     }
 
-    static int lcs(String str1, String str2){
-        int max = 0;
+    static int lcs(String str1, String str2) {
         dp = new int[str2.length()];
-        for(int i = 0; i < str1.length(); i++){
+        for (int i = 0; i < str1.length(); i++) {
             int comm = 0;
-            for(int j = 0; j < str2.length(); j++){
-                if(str1.charAt(i) == str2.charAt(j)) {
-                    if(comm < dp[j]) {
-                        comm = dp[j];
-                        max = Math.max(comm, max);
-                    }
-                    else {
-                        dp[j] = comm + 1;
-                        max = Math.max(dp[j], max);
-                    }
-                }
-                else {
-                    comm = Math.max(comm, dp[j]);
-                    max = Math.max(comm, max);
-                }
+            for (int j = 0; j < str2.length(); j++) {
+                if (str1.charAt(i) == str2.charAt(j)) {
+                    if (comm < dp[j]) max = Math.max(max, comm = dp[j]);
+                    else max = Math.max(max, dp[j] = comm + 1);
+                } else max = Math.max(max, comm = Math.max(comm, dp[j]));
             }
         }
         return max;
