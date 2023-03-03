@@ -1,18 +1,14 @@
 import java.io.*;
-public class Main {
+
+public class Main{
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
     static int[] dp;
     static int max;
     public static void main(String[] args) throws IOException {
         String str1 = br.readLine();
         String str2 = br.readLine();
-        int min = Math.min(str1.length(), str2.length());
-
-
-        if(str1.length()> str2.length()) bw.write(String.valueOf(lcs(str2,str1)));
-        else bw.write(String.valueOf(lcs(str1,str2)));
-        bw.flush();
+        
+        System.out.print(lcs(str1,str2)); 
     }
 
     static int lcs(String str1, String str2) {
@@ -29,3 +25,4 @@ public class Main {
         return max;
     }
 }
+
