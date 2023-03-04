@@ -27,10 +27,10 @@ public class Main{
         bw.flush();
     }
 
-/*
+    /*
 ABCDEF
 BEFDEFACDFABZ
- */
+     */
     static int dp(int idx1, int idx2){
         for(int i = 1; i < idx1; i++){
             for(int j = 1; j < idx2; j++){
@@ -42,14 +42,15 @@ BEFDEFACDFABZ
     }
 
     static void reverseDp(int idx1, int idx2, int find) {
-        while (idx1 != 0 && idx2 != 0) {
-            if (dp[idx1][idx2] == dp[idx1-1][idx2]) idx1 = idx1 - 1;
-            else if (dp[idx1 - 1][idx2] == dp[idx1][idx2 - 1]) {
-                ansStr[find] = str1.charAt(idx1-1);
-                idx1 = idx1 - 1;
-                idx2 = idx2 - 1;
-                find--;
-            } else idx2 = idx2 - 1;
+        if(idx1 == 0 || idx2 == 0) return;
+
+        if(dp[idx1 - 1][idx2] == dp[idx1][idx2]) reverseDp(idx1 - 1, idx2, find);
+        else if(dp[idx1][idx2 -1] == dp[idx1][idx2]) reverseDp(idx1, idx2 - 1, find);
+        else if(dp[idx1][idx2] == dp[idx1-1][idx2-1] + 1){
+            ansStr[find] =  str1.charAt(idx1 - 1);
+            find--;
+            reverseDp(idx1 - 1, idx2 - 1, find);
         }
+
     }
 }
