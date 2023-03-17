@@ -1,36 +1,44 @@
-import java.util.Queue;
-import java.util.Scanner;
-import java.util.Stack;
+import java.util.Comparator;
+import java.util.StringTokenizer;
+import java.io.*;
+import java.util.PriorityQueue;
 
-public class Main {
-    public static void main(String args[]) {
-        Scanner scan = new Scanner(System.in);
-        int n, k, pre;
-        String num;
+public class Main{
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static StringTokenizer st;
+    static StringBuilder sb  = new StringBuilder();
+    static int N, K;
+    static PriorityQueue<int[]> pq = new PriorityQueue<>(new Comparator<int[]>(){
+        @Override
+        public int compare(int[]o1, int[] o2){
+            if(o1[0] == o2[0]) return o1[1] - o2[1];
+            return o2[0] - o1[0];
+        }
+    });
 
-        n = scan.nextInt();
-        k = scan.nextInt();
-        num = scan.next();
-        int compare;
-        Stack<Integer> stack = new Stack<>();
+    public static void main(String[] args)throws IOException{
+        st = new StringTokenizer(br.readLine());
+        N = Integer.parseInt(st.nextToken());
+        K = Integer.parseInt(st.nextToken());
+        char[] number = br.readLine().toCharArray();
 
-        stack.push(Character.getNumericValue(num.charAt(0))) ;
-        for(int i = 1; i < n; i++ ){
-            compare = Character.getNumericValue(num.charAt(i));
-            if(stack.peek() < compare && stack.size()+ n - i  > n - k){
-                while(stack.size() > 0 && stack.peek() < compare && stack.size()+n-i  > n-k){
-                    stack.pop();
-                }
-                stack.push(compare);
+
+        for(int i = 0; i <= K; i++){
+            pq.add(new int[]{number[i] - 48, i});
+        }// 우선순위 큐 초기값
+
+
+        int[] num = pq.poll();
+        sb.append(num[0]);
+        for(int i = K+1; i < N; i++){
+            pq.add(new int[]{number[i] - 48, i});
+            while(num[1] > pq.peek()[1]){
+                pq.poll();
             }
-            else
-                if(stack.size()< n-k)stack.push(compare);
+            num = pq.poll();
+            sb.append(num[0]);
         }
 
-        StringBuilder sb = new StringBuilder();
-        for (Integer integer : stack) {
-            sb.append(integer);
-        }
-        System.out.println(sb.toString());
+        System.out.print(sb);
     }
 }
