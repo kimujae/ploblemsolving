@@ -1,32 +1,34 @@
-import java.util.*;
+import java.io.*;
+import java.util.Arrays;
+import java.util.Collections;
 
 public class Main {
-    public static void main(String[] args) {
-        Scanner scan = new Scanner(System.in);
-        int N = scan.nextInt();
-        String[] words = new String[N];
-        int[] alphabet = new int[26];
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static int N, ans;
+    static int[] weight;
+    static String[] words;
 
-        for(int i = 0; i < N; i ++){
-            words[i] = scan.next();
+    public static void main(String[] args) throws IOException{
+        N = Integer.parseInt(br.readLine());
+        weight = new int[26];
+        words = new String[N];
 
-        }
+        for(int i = 0; i < N; i++){
+            words[i] = br.readLine();
+        }//단어 입력 완료
 
-        for(int x = 0; x < N; x++){
-            for(int y = 0; y < words[x].length(); y++){
-                alphabet[words[x].charAt(y) - 65] += (int)Math.pow(10, words[x].length() - y -1);
-                }
+        for(int i = 0; i < N; i++){
+            int len = words[i].length();
+            for(int j = 0; j < len; j++){
+                int idx = words[i].charAt(j) - 'A';
+                weight[idx] += (int)Math.pow(10, len-j-1);
             }
-
-        Arrays.sort(alphabet);
-
-        int sum = 0;
-        for(int z =1; z < 11; z++){
-            sum += alphabet[26-z] * (10-z);
         }
-        System.out.println(sum);
+        Arrays.sort(weight);
 
+        for(int i = 25; i >= 16; i--){
+            ans += weight[i]*(i-16);
         }
+        System.out.print(ans);
     }
-
-
+}
