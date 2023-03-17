@@ -1,66 +1,65 @@
-import java.util.*;
+import java.util.PriorityQueue;
+import java.util.StringTokenizer;
+import java.io.*;
+import java.util.Comparator;
+import java.util.Arrays;
 
-class Main{
+public class Main {
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static StringTokenizer st;
+    static PriorityQueue<int[]> valueQ = new PriorityQueue<>(new Comparator<int[]>(){
+        @Override
+        public int compare(int[] o1, int[] o2){
+            if(o1[1] == o2[1])return o1[0] - o2[0];
+            return o2[1] - o1[1];
+        }
+    });
 
-    public static void main(String args[]){
-        Scanner scan = new Scanner(System.in);
-        int n,k;
-        long amount;
-        //int[] tmp = new int[]{0,0};
-        n = scan.nextInt();
-        k = scan.nextInt();
+    static PriorityQueue<int[]> weightQ = new PriorityQueue<>(new Comparator<int[]>(){
+        @Override
+        public int compare(int[] o1, int[] o2){
+            if(o1[0] == o2[0])return o1[1] - o2[1];
+            return o1[0] - o2[0];
+        }
+    });
+    static int N, K;
+    static long ans;
+    static int[] bag;
 
+    public static void main(String[] args)throws IOException{
+        st = new StringTokenizer(br.readLine());
+        N = Integer.parseInt(st.nextToken());
+        K = Integer.parseInt(st.nextToken());
+        bag = new int[K];
 
-        PriorityQueue<int[]> qubic = new PriorityQueue<>(new Comparator<int[]>(){
-            @Override
-            public int compare(int[] o1, int[] o2) {
-                // 만일 2차원 배열의 첫 번째 원소가 같다면, 2번째 원소를 기준으로 내림차순 정렬한다.
-                if(o1[0] == o2[0]) {
-                    return Integer.compare(o2[1], o1[1]);
+        for(int i = 0; i < N; i++){
+            st = new StringTokenizer(br.readLine());
+            int weight = Integer.parseInt(st.nextToken());
+            int value = Integer.parseInt(st.nextToken());
+            weightQ.add(new int[]{weight, value});
+        }// 보석 정보 입력 완료
+
+        for(int i = 0; i < K; i++){
+            bag[i] = Integer.parseInt(br.readLine());
+        }//가방 정보 입력 완료
+
+        Arrays.sort(bag);
+
+        int[] gold = new int[2];
+        for(int i =0; i < K; i++){
+            if(!weightQ.isEmpty()) {
+                gold = weightQ.peek();
+
+                while (bag[i] >= gold[0]) {
+                    valueQ.add(weightQ.poll());
+                    if(weightQ.isEmpty()) break;
+                    gold = weightQ.peek();
                 }
-                // 2차원 배열의 첫 번째 원소를 기준으로 오름차순 정렬한다.
-                return Integer.compare(o1[0], o2[0]);
             }
-        });
-
-        PriorityQueue<int[]> qubic1 = new PriorityQueue<>(new Comparator<int[]>(){
-            @Override
-            public int compare(int[] o1, int[] o2) {
-                // 만일 2차원 배열의 첫 번째 원소가 같다면, 2번째 원소를 기준으로 내림차순 정렬한다.
-                if(o1[1] == o2[1]) {
-                    return Integer.compare(o2[0], o1[0]);
-                }
-                // 2차원 배열의 첫 번째 원소를 기준으로 오름차순 정렬한다.
-                return Integer.compare(o2[1], o1[1]);
-            }
-        });
-
-        PriorityQueue<Integer> bag = new PriorityQueue<>();
-
-        for(int i = 0; i < n; i++){
-            qubic.add(new int[]{scan.nextInt(), scan.nextInt()});
+            if(!valueQ.isEmpty())ans += valueQ.poll()[1];
         }
 
-
-        for(int x = 0; x < k ; x++){
-            bag.add(scan.nextInt());
-        }
-        amount =0;
-
-        for(int y = 0; y < k ; y++){
-            int tmp = 0;
-            int bagk = bag.poll();
-            while(qubic.size() >=1 && bagk >=qubic.peek()[0] && qubic.peek()[0]>= tmp){
-                qubic1.add(qubic.poll());
-            }
-            tmp = bagk;
-            if(qubic1.size()>=1){
-                amount += qubic1.poll()[1];
-            }
-        }
-
-        System.out.println(amount);
-
-
+        System.out.print(ans);
     }
+
 }
