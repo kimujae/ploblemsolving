@@ -27,6 +27,7 @@ public class Main {
         Arrays.sort(weight);
 
         for(int i = 25; i >= 16; i--){
+            if(weight[i] == 0) break;
             ans += weight[i]*(i-16);
         }
         System.out.print(ans);
