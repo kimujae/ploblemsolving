@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.StringTokenizer;
 
-public class Main{
+public class Main {
     static int T, N;
     static int[][] parent;
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -33,8 +33,9 @@ public class Main{
                 else if(str.equals("I")){
                     int center = Integer.parseInt(st.nextToken());
                     int enterprise = Integer.parseInt(st.nextToken());
-                    parent[center][0] = enterprise;
-                    parent[center][1] = Math.abs(center -  enterprise) %1000;
+                    //parent[center][1] = Math.abs(center-enterprise)%1000;
+                    parent[center][1] = Math.abs(center-enterprise)%1000;
+                    union(center, enterprise);
                 }
             }
         }
@@ -47,10 +48,14 @@ public class Main{
         if(x == parent[x][0]) return parent[x];
         int y = parent[x][0];
         int[] root = find(y);
-        parent[x][1] += root[1];
-        //parent[x][1] = (parent[x][1] + root[1]) % 1000; 이거 대체 왜 틀림?........
+        parent[x][1] = parent[x][1] + root[1];
         parent[x][0] = root[0];
         return parent[x];
+    }
+
+    static void union(int x, int y){
+        parent[x][0] = y;
+        x = find(x)[0];
     }
 
     static void makeSet(){
