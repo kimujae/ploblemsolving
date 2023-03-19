@@ -18,8 +18,6 @@ public class Main {
     static int N, M, K;
     static long[][] dp;
     static PriorityQueue<Road> city = new PriorityQueue<>(Comparator.comparingLong(o -> o.cost));
-
-    static PriorityQueue<Integer> ansQ = new PriorityQueue<>(Collections.reverseOrder());
     static ArrayList<ArrayList<int[]>> graph = new ArrayList<>();
 
     public static void main(String[] args) throws IOException{
@@ -71,14 +69,14 @@ public class Main {
                 int nextCity = next[0];
                 int nextCost = next[1];
 
-                if(dp[nextCity][(int)curK] > curCost + nextCost) {
-                    dp[nextCity][(int)curK] = curCost + nextCost;
+                if(dp[nextCity][curK] > curCost + nextCost) {
+                    dp[nextCity][curK] = curCost + nextCost;
                     city.add(new Road(nextCity, curCost + nextCost, curK));
                 }
 
 
-                if(curK < K && dp[nextCity][(int)curK+1] > curCost){
-                        dp[nextCity][(int)curK + 1] = curCost;
+                if(curK < K && dp[nextCity][curK+1] > curCost){
+                        dp[nextCity][curK + 1] = curCost;
                         city.add(new Road(nextCity, curCost, curK + 1));
                 }
             }
