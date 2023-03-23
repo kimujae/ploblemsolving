@@ -52,34 +52,6 @@ public class Main {
         System.out.print(road);
     }
 
-
-    static void djikstra(int start){
-        time[start] = 0;
-        city.add(new int[]{start, 0});
-
-        while(!city.isEmpty()){
-            int[] curr = city.poll();
-            int curCity = curr[0];
-            int curCost = curr[1];
-
-
-            if(time[curCity] < curCost || visited[curCity]) continue;
-            for(int i = 0; i < graph.get(curCity).size(); i++){
-                int[] next = graph.get(curCity).get(i);
-                int nextCity = next[0];
-                int nextCost = next[1];
-
-
-                if(time[nextCity] < curCost + nextCost) {
-                    // <= 아님
-                    time[nextCity] = curCost + nextCost;
-                    city.add(new int[]{nextCity, curCost + nextCost});
-                }
-                visited[curCity] = true;
-            }
-        }
-    }
-
     static void topology(int start){
         time[start] = 0;
         city.add(new int[]{start});
@@ -131,40 +103,3 @@ public class Main {
         }
     }
 }
-/*
-5
-7
-1 2 1
-1 3 3
-2 3 2
-2 4 1
-2 5 3
-3 5 1
-4 5 1
-1 5
-
-out :
-
-4
-5
-
------------------------
-
-in :
-
-5
-7
-1 2 1
-1 3 3
-2 3 2
-2 4 1
-4 5 1
-3 5 1
-2 5 3
-1 5
-
-out :
-
-4
-5
- */
