@@ -8,7 +8,7 @@ public class Main {
     static StringTokenizer st;
     static int N, M, groupCount, ans1, ans2, ans3;
     static int[][] pointMap;// 칸번호가 쓰여져 있는 배열
-    static int[][] marbleArr;// 구슬 번호가 쓰여져 있는 배열
+    static int[][] marbleArr; // 구슬 번호가 쓰여져 있는 배열
     static Map<Integer, Integer> icedMarble = new HashMap<>(); // 칸 번호 - 구슬 번호가 저장 되어 있는 맵
     static Deque<int[]> marbleQ = new LinkedList<>(); // 구슬이 칸 번호 순서대로 저장되어있는 큐
     static Queue<Integer> countAndMarbleQ = new LinkedList<>(); // 구슬의 개수와 구슬의 번호가 순서대로 저장되어있는 큐
@@ -45,8 +45,7 @@ public class Main {
                 marbleArr[i][j] = Integer.parseInt(st.nextToken());
             }
         }//구슬 배열 입력 완료
-        //setPointMap(0, 0, N*N-1, 0);// pointMap 완성
-
+        setPointMap(0, 0, N*N-1, 0);// point - 구슬 배열 완성
 
         for(int i = 0; i < M ; i++){
             st = new StringTokenizer(br.readLine());
@@ -55,12 +54,11 @@ public class Main {
 
             icedMarble = new HashMap<>(); // 블리자드 공격 구슬 저장
             visited = new boolean[N][N];
-            setPointMap(0, 0, N*N-1, 0);// point - 구슬 배열 완성
             blizzard(((N+1)/ 2) -1, ((N+1)/ 2) -1, s, d); // 블리자드 공격
             bombMarble(); // 연속구슬 폭발
             updateMarbleArr(); // 폭발 이후 marbleArr 갱신
             groupMarble(); // 구슬 그룹핑
-            setMarbleArr(); // marbleArr 재갱신
+            updateMarbleArr(); // 그룹핑 이후 marbleArr 갱신
         }//공격 입력 완료
 
         System.out.println(ans1 + (2*ans2) + (3*ans3));
@@ -88,7 +86,7 @@ public class Main {
         for(int i = 0; i < 4; i++){
             int nextX = x + changeX[i];
             int nextY = y + changeY[i];
-            
+
             if(nextX < 0 || nextX > N-1 || nextY < 0 || nextY > N-1)
                 continue;
 
@@ -102,10 +100,11 @@ public class Main {
             setPointMap(nextX, nextY, pointNum-1 , i);
         }
     }
-    
+
     static void updateMarbleArr(){
         int x =  ((N+1)/ 2) -1 , y =  ((N+1)/ 2) -1; // 탐색 시작 point
         int pointNum = 1; //pointNum 1번
+        marbleArr = new int[N][N];
         int size = marbleQ.size() , count = 0;
 
         while(pointNum < N*N) {
@@ -122,15 +121,14 @@ public class Main {
                     break;
                 }
             }
-            
+
             if(size > count){ // 배열에 넣을 구슬이 아직 남아있을때
                 int[] now = marbleQ.poll();
                 marbleArr[x][y] = now[1]; // 구슬번호
-                marbleQ.add(now); 
+                marbleQ.add(now);
                 count++;
             }
-            else marbleArr[x][y] = 0; // 배열에 넣을 구슬이 없을때
-            
+            else return; // 배열에 넣을 구슬이 없을때
             pointNum++;
         }
     }
@@ -149,11 +147,11 @@ public class Main {
 
                 if(icedMarble.get(nowPoint) != null) { // 공격을 받아 파괴 된 구슬이면 pass
                     pointNum++;
-                    continue; 
+                    continue;
                 }
                 marbleQ.add(now); // 일단 큐에 삽입
 
-                if(nowMarble == prev) continuity++; 
+                if(nowMarble == prev) continuity++;
                 else{ // 연속이 끝났으면, 폭발 조건을 따짐
                     if(continuity >=3){// 폭발 조건일 때
                         marbleQ.pollLast();
@@ -210,7 +208,9 @@ public class Main {
         //순서대로 각 칸을 순회하는 메소드
         int x =  ((N+1)/ 2) -1;
         int y =  ((N+1)/ 2) -2;
+        int point = 0;
         int pointNum = 1;
+        marbleQ = new LinkedList<>();
         visited = new boolean[N][N];
         while(pointNum < N*N) {
             for (int i = 0; i < 4; i++) {
@@ -226,16 +226,18 @@ public class Main {
                     break;
                 }
             }
-            if(visited[x][y] || marbleArr[x][y] == 0){
+
+            if(visited[x][y]){
                 pointNum++;
                 continue;
             }
 
-
             groupCount = 0;
+            if(marbleArr[x][y] == 0) return;
             group(x, y, marbleArr[x][y], pointNum+1);
-            countAndMarbleQ.add(groupCount);
-            countAndMarbleQ.add(marbleArr[x][y]);
+            marbleQ.add(new int[]{++point, groupCount});
+            marbleQ.add(new int[]{++point, marbleArr[x][y]});
+            if(point > (N*N) -2) return;
             pointNum++;
         }
     }
