@@ -5,7 +5,7 @@ class Solution {
         int r;
         int c;
         String word;
-        ArrayList<Cell> mergeList = new ArrayList<>();
+        Set<Cell> mergeList = new HashSet<>();
 
         Cell(int r, int c){
             this.r = r;
@@ -22,17 +22,17 @@ class Solution {
             this.word = word;
         }
 
-        void setMerge(ArrayList<Cell> list){
+        void setMerge(Set<Cell> list){
             this.mergeList = list;
         }
 
-        ArrayList<Cell> getMerge(){
+        Set<Cell> getMerge(){
             return mergeList;
         }
     }
     public ArrayList<ArrayList<Cell>> table = new ArrayList<>();
 
-    public String[] solution(String[] commands)throws IOException {
+    public String[] solution(String[] commands) {
         ArrayList<String> answer = new ArrayList<>();
 
         
@@ -99,7 +99,7 @@ class Solution {
         //또는 셀의 값 변경
     
         Cell cell =  table.get(r).get(c);
-        ArrayList<Cell> mergeList = cell.getMerge();
+        Set<Cell> mergeList = cell.getMerge();
 
         for(Cell ce : mergeList){
             ce.setWord(word);
@@ -123,9 +123,8 @@ class Solution {
         //r1, c1 셀과 r2, c2 셀을 병합
         Cell cell1 = table.get(r1).get(c1);
         Cell cell2 = table.get(r2).get(c2);
-
-        ArrayList<Cell> list1  = cell1.getMerge();
-        ArrayList<Cell> list2  = cell2.getMerge();
+        Set<Cell> list1  = cell1.getMerge();
+        Set<Cell> list2  = cell2.getMerge();
         if(list1 == list2) return;
         
 
@@ -179,12 +178,13 @@ class Solution {
     void unmerge(int r, int c){
         // 셀 병합 해제 후 값은 r,c가 가짐 
         //&& 나머지 해제 된 셀은 빈값을 가짐
+        
         Cell cell = table.get(r).get(c);
-        ArrayList<Cell> mergeList = cell.getMerge();
+        Set<Cell> mergeList = cell.getMerge();
         String word = cell.getWord();
 
         for(Cell cells : mergeList){
-            ArrayList<Cell> newList = new ArrayList<>();
+            Set<Cell> newList = new HashSet<>();
             newList.add(cells);
             cells.setMerge(newList);
             cells.setWord("EMPTY");
