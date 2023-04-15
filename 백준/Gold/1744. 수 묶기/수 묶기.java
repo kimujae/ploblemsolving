@@ -1,98 +1,63 @@
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.PriorityQueue;
+import java.util.StringTokenizer;
 
 public class Main {
-    public static void main(String[] args) {
-        Scanner scan = new Scanner(System.in);
-        int N = scan.nextInt();
-        Integer[] numbers = new Integer[N];
-        int answer, minus, one;
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static StringTokenizer st;
+    static int N;
+    static PriorityQueue<Integer> pq = new PriorityQueue<>();
 
-        one = 0;
-        minus =0;
-        answer = 0;
-
-        for(int input = 0; input < N; input++){
-            numbers[input] = scan.nextInt();
-            if(numbers[input] <= 0) minus++;
-            if(numbers[input] == 1) one++;
+    public static void main(String[] args)throws IOException {
+        N = Integer.parseInt(br.readLine());
+        for(int i = 0; i < N; i++){
+            pq.add(Integer.parseInt(br.readLine()));
         }
 
-        Arrays.sort(numbers, Collections.reverseOrder());
 
 
-        if(N==1) answer = numbers[0];
-        else if(numbers[N-1] >= 0) {
-            //0이상의 정수로 이루어진 수열
-            if ((N-minus-one) % 2 == 0) {
-                //양수 원소가 짝수
-                for (int i = 0; i < N - minus - one ; i = i + 2) {
-                    answer += numbers[i] * numbers[i + 1];
-                }
-                answer += one;
-            } else if((N-minus-one) % 2 == 1) {
-                //양수 원소가 홀수
-                for (int i = 0; i < N - minus - one - 1; i = i + 2) {
-                    answer += numbers[i] * numbers[i + 1];
-                }
-                answer += numbers[N - minus - one - 1];
-                answer += one;
+
+        /*
+        1. 두가지 수를 묶는다.
+        2. 오름차순 정렬을 한다.
+        3. 수를 두개씩 뽑는다.
+        4. 만약 두 수가 모두 음수 혹은 0이라면 곱한다.
+        5. 만약 두 수가 모두 양수라면 곱한다.
+        6. 정답을 반환한다.
+         */
+        int ans = 0;
+        while(!pq.isEmpty()){
+            if(pq.size() ==1) {
+                ans+= pq.poll();
+                break;
             }
-        } else if(numbers[0] <= 0){
-            //음수 또는 0으로 구성된 수열
-            if(N % 2 == 0){
-                //원소가 짝수
-                for(int i = N-1; i > 0; i = i-2){
-                    answer += numbers[i]*numbers[i-1];
+            //두가지 수를 뽑는다.
+            int num1 = pq.poll();
+            int num2 = pq.poll();
 
-                }
-            }else{
-                for(int i = N-1; i > 1; i = i-2){
-                    answer += numbers[i]*numbers[i-1];
-                }
-                answer += numbers[0];
+            // 둘 모두 0 또는 음수인 경우 -> 묶는다.
+            if(num1<=0 && num2 <=0){
+                ans += num1*num2;
+                continue;
+            }
+            // 둘 모두 양수인 경우 -> 묶는다.
+            if(pq.size() %2 == 0 && num1 > 1 && num2 > 1){
+                ans += num1* num2;
+                continue;
             }
 
-        }else{
-            if((N-minus-one) % 2 == 0){
-                for (int i = 0; i < N - minus - one; i = i + 2) {
-                    answer += numbers[i] * numbers[i + 1];
-                }
-                answer += one;
-
-                if(minus % 2 ==0){
-                    for(int i = N-1; i > N-minus; i = i-2){
-                        answer += numbers[i]*numbers[i-1];
-                    }
-                }else{
-                    for(int i = N-1; i > N -minus; i = i-2){
-                        answer += numbers[i]*numbers[i-1];
-                    }
-                    answer += numbers[N- minus];
-                }
-
-            }else{
-                //원소가 홀수
-                for (int i = 0; i < N - minus - one -1; i = i + 2) {
-                    answer += numbers[i] * numbers[i + 1];
-                }
-                answer += numbers[N - minus - one -1];
-                answer += one;
-
-                if(minus % 2 ==0){
-                    for(int i = N-1; i > N-minus; i = i-2){
-                        answer += numbers[i]*numbers[i-1];
-                    }
-                }else{
-                    for(int i = N-1; i > N - minus ; i = i-2){
-                        answer += numbers[i]*numbers[i-1];
-                    }
-                    answer += numbers[N - minus];
-                }
+            // 그 이외의 경우 : 음수,0 & 0,양수 -> 묶지 않는다.
+            ans += num1;// 1또는 음수를 일단 더함
+            if(num2 == 0 || num2 == 1) {
+                ans += num2;
+                continue;
             }
-
+            if(pq.size() % 2  == 1)ans += num2* pq.poll();
+            else ans += num2;
         }
-        System.out.println(answer);
+
+        System.out.println(ans);
     }
 }
