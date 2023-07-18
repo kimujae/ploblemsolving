@@ -4,15 +4,15 @@
 
 ### 성능 요약
 
-메모리: 12180 KB, 시간: 100 ms
+메모리: 11828 KB, 시간: 84 ms
 
 ### 분류
 
-그래프 이론, 그래프 탐색, 너비 우선 탐색, 비트마스킹
+너비 우선 탐색, 비트마스킹, 그래프 이론, 그래프 탐색
 
 ### 문제 설명
 
-<p style="text-align: center;"><img alt="" src="" style="height:189px; width:307px"></p>
+<p style="text-align: center;"><img alt="" src="https://www.acmicpc.net/JudgeOnline/upload/201008/cas.PNG" style="height:189px; width:307px"></p>
 
 <p>대략 위의 그림과 같이 생긴 성곽이 있다. 굵은 선은 벽을 나타내고, 점선은 벽이 없어서 지나다닐 수 있는 통로를 나타낸다. 이러한 형태의 성의 지도를 입력받아서 다음을 계산하는 프로그램을 작성하시오.</p>
 
