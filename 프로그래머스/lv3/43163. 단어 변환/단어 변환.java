@@ -1,34 +1,33 @@
+import java.util.*;
 class Solution {
-    private int d = Integer.MAX_VALUE;
-    private boolean[] word;
-    
+    private boolean[] visit;
+    private int min = Integer.MAX_VALUE;
     public int solution(String begin, String target, String[] words) {
         int answer = 0;
-        word = new boolean[words.length];
-        dfs(begin, target, words, 0);
-        
-        if(d== Integer.MAX_VALUE) return 0;
-        return d;
+        visit = new boolean[words.length];
+        dfs(0, target, words, begin);
+        if(min == Integer.MAX_VALUE) return 0;
+        else return min;
     }
     
-    
-    void dfs(String begin, String target, String[] words, int dist){
-        if(begin.equals(target)) d = Math.min(d, dist);
-        
-        for(int i = 0; i < begin.length(); i++){
-           a:for(int j = 0; j < words.length; j++){    
-                for(int k = 0; k < words[j].length(); k++){
-                    if(k != i && begin.charAt(k) != words[j].charAt(k))
-                        continue a; 
-                }
-                 
-                if(word[j])
-                    continue;
-                
-                word[j] = true;
-                dfs(words[j], target, words, dist+1);
-                word[j] = false;
-            }
-        }
-    }
+   public void dfs(int depth, String target, String[] words, String word) {
+       if(word.equals(target)) min = Math.min(min, depth);
+       if(depth == words.length) return;
+       
+       int idx = -1;
+       for(String w : words) {
+           if(visit[++idx]) continue;
+           
+           int diff = 0;
+           for(int i = 0; i < w.length(); i++) {
+               if(word.charAt(i) != w.charAt(i)) diff++;
+           }
+           
+           if(diff == 1) {
+               visit[idx] = true; 
+               dfs(depth + 1, target, words, w);
+               visit[idx] = false;
+           }
+       }
+   }
 }
