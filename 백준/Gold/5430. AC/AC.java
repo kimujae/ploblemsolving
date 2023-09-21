@@ -1,132 +1,68 @@
-import javax.swing.text.Style;
-import java.io.BufferedWriter;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.InputStreamReader;
 import java.util.Deque;
 import java.util.LinkedList;
-import java.util.Scanner;
-import java.util.StringTokenizer;
-
-public class Main{
-
-    public static Deque<Integer> deque = new LinkedList<Integer>();
-    public static boolean toggle;
-
-    public static void main(String[] args) throws IOException{
-        /*
-        함수 : R/D
-        R : 뒤집기는 head와 tail을 서로 바꾸면 된다.
-        기본값 : head : pollFirst(), tail : pollLast()
-        R값 : 기본값 반대
-
-        D :
-        기본값 : pollFirst()
-        R값 : pollLast()
 
 
-         */
+public class Main {
+    private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    public static void main(String[] args) throws IOException {
+        int tc = Integer.parseInt(br.readLine());
+        StringBuilder sb = new StringBuilder();
+        a : for(int  i = 0; i < tc; i++) {
 
-
-        Scanner scan = new Scanner(System.in);
-        int testCase = scan.nextInt();
-
-        for(int iter = 0; iter < testCase ; iter++) {
-            //testcase개수만큼 실행
-            String function = scan.next(); // 함수명령어
-            int size = scan.nextInt();
-            String array = scan.next();
-            toggle = false;
-            String num = "";
-
-            for (int index = 0; index < array.length(); index++) {
-                if (array.charAt(index) == '[') {
-                    continue;
-                }
-                if (array.charAt(index) == ',') {
-                    deque.add(Integer.parseInt(num));
-                    num = "";
-                    deque.add(-1);
-                    continue;
-                }
-                if (array.charAt(index) == ']') {
-                    if(!num.equals("")) deque.add(Integer.parseInt(num));
-                    continue;
-                }
-                num = num + array.charAt(index) + "";
-            }// 큐 완성
-            //while(!deque.isEmpty()) System.out.print(deque.poll());
-            //System.out.println();
-
-            boolean result = false;
-            for (int i = 0; i < function.length(); i++) {
-                if (result = ExecFunction(function.charAt(i))) {
-                    System.out.println("error");
-                    break;
-                }
-            }// 함수 실행
-            if (result == true) continue;
-
-            //결과 출력
-            printResult();
-        }
-    }
-
-
-
-    public static boolean ExecFunction(char function){
-
-        //boolean toggle = false;
-
-        if(function == 'R'){
-            toggle = !toggle;
-        }
-        else if(function == 'D'){
-            if(deque.isEmpty()) return true;
-            getArray(toggle);
-        }
-        return false;
-    }
-
-
-    public static void getArray(boolean toggle){
-
-        if(toggle) {
-            while(!deque.isEmpty() && deque.getLast() != -1) {
-                deque.pollLast(); // 정수 삭제
+            Deque<Integer> dq = new LinkedList<>();
+            String inst = br.readLine();
+            int len = Integer.parseInt(br.readLine());
+            String str = br.readLine();
+            String[] arr = str.substring(1,str.length()-1).split(",");
+            for(int k = 0; k< arr.length; k++) {
+                if(arr[k].length() == 0) break;
+                dq.add(Integer.parseInt(arr[k]));
             }
-            deque.pollLast(); //공백 제거
-        }
-        else {
-            while(!deque.isEmpty() && deque.peek() != -1) {
-                deque.pollFirst(); // 정수 삭제
-            }
-            deque.pollFirst(); // -1 삭제
-        }
-    }
 
-    static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-    public static void printResult() throws IOException {
-            bw.append('[');
-
-            while (!deque.isEmpty()) {
-                if (!toggle) {
-                    if (deque.peek() == -1) {
-                        bw.append(',');
-                        deque.poll();
-                    } else {
-                        bw.append(String.valueOf(deque.poll()));
+            boolean isFront = true;
+            for(int k = 0; k < inst.length(); k++) {
+                char c = inst.charAt(k);
+                if(c == 'R') isFront = !isFront;
+                else {
+                    if(dq.isEmpty()){
+                        sb.append("error");
+                        sb.append('\n');
+                        continue a;
                     }
-                } else {
-                    if (deque.getLast() == -1) {
-                        bw.append(',');
-                        deque.pollLast();
-                    } else {
-                        bw.append(String.valueOf(deque.pollLast()));
+
+                    if(isFront) {
+                        dq.pollFirst();
+                    }else {
+                        dq.pollLast();
                     }
                 }
             }
-            bw.append(']');
-            bw.append('\n');
-            bw.flush();
+
+
+
+            sb.append('[');
+            if(isFront) {
+                while(dq.size() > 1) {
+                    int num = dq.pollFirst();
+                    sb.append(num);
+                    sb.append(',');
+                }
+                if(!dq.isEmpty()) sb.append(dq.pollFirst());
+            } else {
+                while(dq.size() > 1) {
+                    int num = dq.pollLast();
+                    sb.append(num);
+                    sb.append(',');
+                }
+                if(!dq.isEmpty()) sb.append(dq.pollLast());
+            }
+
+            sb.append(']');
+            sb.append('\n');
+        }
+        System.out.print(sb.toString());
     }
 }
