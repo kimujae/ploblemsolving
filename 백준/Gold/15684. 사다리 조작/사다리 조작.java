@@ -34,13 +34,13 @@ public class Main {
         ans = -1;
         for(int i = 0; i < 4; i++) {
             if(f) break;
-            dfs(new int[]{0, 0}, 0, i);
+            dfs(0, 0, i);
         }
 
         System.out.println(ans);
     }
 
-    public static void dfs(int[] now, int depth, int l) {
+    public static void dfs(int x, int depth, int l) {
         if(depth == l) {
             if(f) return;
 
@@ -60,8 +60,7 @@ public class Main {
             return;
         }
 
-        int x = now[0];
-        int y = now[1];
+        
         for(int i = x; i < H; i++) {
             for(int j = 0; j < N - 1; j++) {
                 if(f) return;
@@ -69,8 +68,8 @@ public class Main {
 
                 map[i][j] = 1;
                 map[i][j + 1] = 2;
-                if(j == N - 2) dfs(new int[]{i + 1, 0}, depth + 1, l);
-                else dfs(new int[]{i, j + 1}, depth + 1, l);
+                if(j == N - 2) dfs(i + 1, depth + 1, l);
+                else dfs(i , depth + 1, l);
                 map[i][j] = 0;
                 map[i][j + 1] = 0;
             }
