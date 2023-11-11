@@ -36,7 +36,7 @@ public class Main {
         int conn = 0;
         long dist = 0;
         while(!pq.isEmpty()) {
-            //if(conn == E - 1) break;
+            if(conn == V - 1) break;
 
             int[] now = pq.poll();
             int s = now[0];
