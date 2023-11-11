@@ -7,12 +7,7 @@ class Solution {
         dict = new ArrayList<>();
         dfs(0, "");
         
-        int answer = 0;
-        for(String str : dict) {
-            if(str.equals(word)) break;
-            answer ++;
-        }
-        return answer;
+        return dict.indexOf(word);
     }
     
     public void dfs(int depth, String str) {
