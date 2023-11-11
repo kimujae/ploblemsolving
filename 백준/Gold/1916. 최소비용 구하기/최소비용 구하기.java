@@ -1,71 +1,78 @@
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
 
 public class Main {
-    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    static int n , m, ans, destCity;
-    static StringTokenizer st;
-    static int[][] dp;
-    static int[] co;
-    static boolean[][] visited;
-    static ArrayList<ArrayList<int[]>> graph = new ArrayList<>();
-    static PriorityQueue<int[]> pq = new PriorityQueue<>(new Comparator<int[]>(){
-        @Override
-        public int compare(int[] o1, int[] o2){
-            if(o1[1] == o2[1])return o1[0] - o2[0];
-            return o1[1] - o2[1];
-        }
-    });
+    private static StringTokenizer st;
+    private static BufferedReader br =
+            new BufferedReader(new InputStreamReader(System.in));
+    private static ArrayList<ArrayList<int[]>> graph = new ArrayList<>();
+    private static int N, M, s, e;
+    private static int[] d;
+    public static void main(String[] args) throws IOException {
+        N = Integer.parseInt(br.readLine());
+        M = Integer.parseInt(br.readLine());
+        d = new int[N+1];
 
-    public static void main(String[] args)throws IOException{
-        n = Integer.parseInt(br.readLine());
-        m = Integer.parseInt(br.readLine());
-        co = new int[n+1];
-        dp = new int[n+1][n+1];
-        visited = new boolean[n+1][n+1];
-
-
-        Arrays.fill(co, Integer.MAX_VALUE);
-
-
-        for(int i = 0; i < n+1; i++){
+        for(int i = 0; i < N+1; i++) {
             graph.add(new ArrayList<>());
         }
 
-        for(int i = 0; i < m; i++){
+        for(int i = 0; i < M; i++) {
             st = new StringTokenizer(br.readLine());
             int start = Integer.parseInt(st.nextToken());
-            int dest = Integer.parseInt(st.nextToken());
+            int end = Integer.parseInt(st.nextToken());
             int cost = Integer.parseInt(st.nextToken());
 
-            graph.get(start).add(new int[]{dest, cost});
-            //co[dest] = cost;
-        }//출발도시, 도착도시, 비용 입력 완료
+            graph.get(start).add(new int[]{end, cost});
+        }
 
         st = new StringTokenizer(br.readLine());
-        djikstra(Integer.parseInt(st.nextToken()));
-        System.out.println(co[Integer.parseInt(st.nextToken())]);
+        s = Integer.parseInt(st.nextToken());
+        e = Integer.parseInt(st.nextToken());
+
+
+        Arrays.fill(d, Integer.MAX_VALUE);
+//        for(int i = 0; i < graph.get(s).size(); i++) {
+//            int[] info = graph.get(s).get(i);
+//            int node = info[0];
+//            int cost = info[1];
+//
+//            d[node] = cost;
+//        }
+        d[s] = 0;
+
+        dijkstra(s);
+        System.out.print(d[e]);
     }
 
-    static void djikstra(int start) {
-        co[start] = 0;
+
+    public static void dijkstra(int start) {
+        PriorityQueue<int[]> pq = new PriorityQueue<>(new Comparator<int[]>(){
+            @Override
+            public int compare(int[] o1, int[] o2) {
+                return o1[1] - o2[1];
+            }
+        });
+
         pq.add(new int[]{start, 0});
-        while(!pq.isEmpty()){
-            int[] node = pq.poll();
-            int current = node[0];
-            int dist = node[1];
+        while(!pq.isEmpty()) {
+            int[] n = pq.poll();
+            int now = n[0];
+            int dist = n[1];
 
-            if(co[current] < dist) continue;
-            for(int i = 0; i < graph.get(current).size(); i++){
-                int next = graph.get(current).get(i)[0];
-                int next_dist = dist + graph.get(current).get(i)[1];
+            if(d[now] < dist) continue;
+            for(int i = 0; i < graph.get(now).size(); i++) {
+                int[] ne = graph.get(now).get(i);
+                int next = ne[0];
+                int cost = ne[1];
 
-                if(co[next] > next_dist) {
-                    co[next] = next_dist;
-                    pq.add(new int[]{next, next_dist});
+                if(dist + cost < d[next]) {
+                    d[next] = dist + cost;
+                    pq.add(new int[]{next, dist + cost});
                 }
             }
         }
     }
-
 }
