@@ -1,17 +1,11 @@
 const fs = require('fs');
-const input = fs.readFileSync("/dev/stdin").toString().trim();
+const input = fs.readFileSync('/dev/stdin').toString();
 
 let alph = Array.from({length : 26}, () => -1);
-let basic = "a";
-for(let i = 0; i < input.length; i++) {
-    let idx = input.charCodeAt(i) - basic.charCodeAt(0);
-
-    if(alph[idx] != -1) continue;
-    else alph[idx] = i;
+for(let i = 97; i < 123; i++) {
+    let alphabet = String.fromCharCode(i);
+    // 알파벳 문자를 반환 받는다 a~z
+    alph[i-97] = input.indexOf(alphabet);
 }
 
-let ans = '';
-for(let val of alph) {
-   ans += val+" ";     
-}
-console.log(ans);
+console.log(alph.join(" "));
