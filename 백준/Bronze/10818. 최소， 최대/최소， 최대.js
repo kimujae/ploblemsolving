@@ -2,8 +2,13 @@ const input = require('fs').readFileSync('/dev/stdin').toString().trim().split('
 let N = input[0];
 let arr = input[1].split(' ');
 
-arr.sort((a, b) => a - b);
+let min = 10000001;
+let max = -10000001;
 
-let str = '';
-str += arr[0] + " " + arr[(+N) - 1];
-console.log(str);
+for(let num of arr) {
+    let n = +num;
+    if(n > max) max = n;
+    if(n < min) min = n;
+}
+
+console.log(`${min} ${max}`);
