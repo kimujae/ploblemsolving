@@ -1,94 +1,65 @@
-import java.util. ArrayList;
-import java.util.StringTokenizer;
-import java.io.*;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Queue;
-import java.util.LinkedList;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.*;
 
-public class Main{
-    static ArrayList<ArrayList<Integer>> network = new ArrayList<>();
-    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-    static StringTokenizer st;
-    static Queue<Integer> queue = new LinkedList<>();
-    static int N, M;
-    static boolean[] visited;
-    static int[][] value;
+public class Main {
+    private static StringTokenizer st;
+    private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    private static int N, M, ans;
+    private static List<List<Integer>> graph = new ArrayList<>();
+    private static TreeMap<Integer, List<Integer>> rank = new TreeMap<>(Collections.reverseOrder());
+    private static boolean[] visited;
+    public static void main(String[] args) throws IOException {
 
-    public static void main(String[] args) throws IOException{
         st = new StringTokenizer(br.readLine());
-        N = Integer.parseInt(st.nextToken());
-        M = Integer.parseInt(st.nextToken());
-        visited = new boolean[N+1];
-        value = new int[N+1][2];
+        N = Integer.valueOf(st.nextToken());
+        M = Integer.valueOf(st.nextToken());
 
-        for(int i = 0; i < N+1; i++){
-            network.add(new ArrayList<>());
+        // pc graph 초기화
+        for(int i = 0; i < N; i++) {
+
+            graph.add(new ArrayList<>());
         }
 
-        for(int i = 0; i < M; i++){
+        for(int i = 0; i < M; i++) {
             st = new StringTokenizer(br.readLine());
-            int node1 = Integer.parseInt(st.nextToken());
-            int node2 = Integer.parseInt(st.nextToken());
+            int pc = Integer.valueOf(st.nextToken());
+            int trustedPc = Integer.valueOf(st.nextToken());
+            // 단방향 그래프 : trustedPc -> pc
 
-            network.get(node1).add(node2);
-            //network.get(node2).add(node1);
-        }//네트워크 완성
+            graph.get(trustedPc - 1).add(pc - 1);
 
-
-        for(int i = 1; i < N+1; i++){
-            visited = new boolean[N+1];
-            value[i][0] = i;
-            visited[i] = true;
-            //bfs(i);
-            dfs(i);
         }
 
-        Arrays.sort(value, new Comparator<int[]>(){
-            @Override
-            public int compare(int[] o1, int[] o2){
-                return o2[1] - o1[1];
+
+        for(int i = 0; i < N; i++) {
+            visited = new boolean[N];
+            ans = 0;
+            dfs(i, 1);
+            rank.computeIfAbsent(ans, k -> new ArrayList<>());
+            rank.get(ans).add(i + 1);
+        }
+
+        for(Integer key : rank.keySet()) {
+            for(int node : rank.get(key)) {
+                System.out.print(node);
+                System.out.print(" ");
             }
-        });
-
-        int i =0;
-        int num = 0;
-        do {
-            num = value[i][1];
-            int com = value[i][0];
-            bw.write(String.valueOf(com)+" ");
-            i++;
-        } while(i < N+1 && num == value[i][1]);
-
-        bw.flush();
-    }
-
-/*
-    static void bfs(int x){
-        visited[x] = true;
-        queue.add(x);
-
-        while(!queue.isEmpty()){
-            for(int next : network.get(queue.poll())){
-                if(visited[next])
-                    continue;
-
-                visited[next] = true;
-                value[x][1]++;
-                queue.add(next);
-            }
+            break;
         }
     }
-*/
-    static void dfs(int x){
-        for(int next : network.get(x)){
-            if(visited[next])
-                continue;
 
-            value[next][1]++;
-            visited[next] = true;
-            dfs(next);
+    private static void dfs(int node, int depth) {
+        if(visited[node]) return;
+
+        visited[node] = true;
+        for(int nextNode : graph.get(node)) {
+            if(visited[nextNode]) continue;
+            ans+=1;
+            dfs(nextNode, depth + 1);
         }
+
     }
+
 }
